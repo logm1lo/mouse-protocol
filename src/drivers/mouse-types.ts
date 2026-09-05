@@ -118,7 +118,7 @@ export type MouseLightingMode =
   | "Breathing dual";
 
 export interface MouseStatus {
-  brand: "Logitech" | "Pulsar" | "Endgame Gear" | "WLMouse" | "G-Wolves" | "Lamzu" | "CRDRAKO" | "Attack Shark" | "Orbital" | "Razer" | "Teevolution" | "ATK" | "VGN" | "Finalmouse" | "Keychron" | "moddoMOUSE" | "Ninjutso" | "Zaunkoenig" | "Fantech" | "Wooting" | "WALLHACK" | "SteelSeries" | "Glorious";
+  brand: "Logitech" | "Pulsar" | "Endgame Gear" | "WLMouse" | "G-Wolves" | "Lamzu" | "CRDRAKO" | "Attack Shark" | "Orbital" | "Razer" | "Teevolution" | "ATK" | "VGN" | "Finalmouse" | "Keychron" | "moddoMOUSE" | "Ninjutso" | "Zaunkoenig" | "Fantech" | "Wooting" | "WALLHACK" | "SteelSeries" | "Glorious" | "MCHOSE";
   name: string;
   /** Driver-supplied UI policy (optional; keeps control.ts brand-agnostic). */
   ui?: MouseUiHints;
@@ -138,6 +138,31 @@ export interface MouseStatus {
   pollingRateHz: number;
   supportedPollingRates?: number[];
   activeProfile: number | null;
+  /**
+   * How many onboard profiles the device exposes, when it has a simple
+   * numbered set the user can switch between (distinct from Logitech's
+   * onboard-profile editor). Set together with a 1-based `activeProfile` and a
+   * `setProfile(index)` method, and the shared profile selector appears.
+   */
+  profileCount?: number;
+  /**
+   * Current button assignments, keyed by physical button name. Set together
+   * with `buttonOptions` and a `setButtonMapping(button, action)` method, and
+   * the shared button remapper appears. Distinct from the Razer and Endgame
+   * fields above, which predate this and carry brand-specific shapes.
+   */
+  buttonMappings?: Record<string, string>;
+  /**
+   * Named power/performance modes a device offers as a single choice, with
+   * `powerMode` holding the current one and a `setPowerMode(name)` method.
+   * Distinct from the boolean `performanceMode` above, which is a switch.
+   */
+  powerModes?: string[];
+  powerMode?: string;
+  /** Names for each onboard profile, when the device stores them. */
+  profileNames?: string[];
+  /** Every action `setButtonMapping` will accept, in display order. */
+  buttonOptions?: string[];
   deviceMode?: "Onboard" | "Host" | "Unknown";
   unitId?: string | null;
   modelId?: string | null;
