@@ -259,7 +259,6 @@ export interface MouseStatus {
    */
   longRangeMode?: boolean | null;
   hyperMode?: boolean | null;
-  longRangeMode?: boolean | null;
   /** Sensor pinned to its highest frame rate (WLmouse "Turbo Mode"). */
   turboMode?: boolean | null;
   /** Whether button chords can change mouse settings without the driver. */
