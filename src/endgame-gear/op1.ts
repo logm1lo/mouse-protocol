@@ -116,7 +116,11 @@ export const EGG_DEVICE_PROFILES: ReadonlyMap<number, EggDeviceProfile> = new Ma
   // OP1w 4K v2: first wireless model on the OP1-8K v2 config protocol. The
   // dongle's own USB PID (0x1970) is reused from the older, unrelated OP1we
   // (see egg-we-hid.ts) — descriptor-based detection there keeps the two
-  // drivers from both claiming it. See issue #107.
+  // drivers from both claiming it. See issue #107. That same dongle PID (and
+  // its 0x1984 successor) is also reused across the OP1w and XM2w 4K v2
+  // mice — the receiver hardware doesn't distinguish them, only the mouse's
+  // own reported name does, so `eggProfileForPid` takes the device name and
+  // resolves to `EGG_XM2W_4K_V2_PIDS` below when it mentions "xm2".
   [0x1984, {
     pid: 0x1984,
     name: "Endgame Gear OP1w 4K v2",
@@ -146,6 +150,14 @@ export const EGG_DEVICE_PROFILES: ReadonlyMap<number, EggDeviceProfile> = new Ma
     maxPollingHz: 4000,
   }],
 ]);
+
+/** PIDs whose dongle is shared between an OP1w and an XM2w 4K v2 mouse. */
+const EGG_XM2W_4K_V2_PIDS = new Set([0x1970, 0x1984]);
+
+const EGG_XM2W_4K_V2_PROFILE: EggDeviceProfile = {
+  ...EGG_DEVICE_PROFILES.get(0x1984)!,
+  name: "Endgame Gear XM2w 4K v2",
+};
 
 export const EGG_REPORT = {
   config: 0xa0,
@@ -221,7 +233,8 @@ export function eggNormalizeFeatureReport(
   return result;
 }
 
-export function eggProfileForPid(pid: number): EggDeviceProfile {
+export function eggProfileForPid(pid: number, productName = ""): EggDeviceProfile {
+  if (EGG_XM2W_4K_V2_PIDS.has(pid) && productName.toLowerCase().includes("xm2")) return EGG_XM2W_4K_V2_PROFILE;
   const profile = EGG_DEVICE_PROFILES.get(pid);
   if (!profile) throw new Error(`Unsupported Endgame Gear product 0x${pid.toString(16)}.`);
   return profile;

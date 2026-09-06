@@ -14,6 +14,7 @@ import {
   eggIsValidCpi,
   eggLodOptions,
   eggNormalizeFeatureReport,
+  eggProfileForPid,
   eggReadUint16LE,
   eggWriteEnabledCpiStages,
 } from "@openmouse/protocol/endgame-gear-op1";
@@ -38,6 +39,15 @@ test("OP1w 4K v2 wireless models are capped at 4000 Hz while wired 8K models kee
   assert.equal(op1v2.maxPollingHz, 8000);
   assert.equal(EGG_DEVICE_PROFILES.get(0x1984)!.maxPollingHz, 4000);
   assert.equal(EGG_DEVICE_PROFILES.get(0x1970)!.maxPollingHz, 4000);
+});
+
+test("the shared 4K v2 dongle PIDs resolve to XM2w by the mouse's own reported name, not OP1w by default", () => {
+  assert.equal(eggProfileForPid(0x1970).name, "Endgame Gear OP1w 4K v2");
+  assert.equal(eggProfileForPid(0x1984).name, "Endgame Gear OP1w 4K v2");
+  assert.equal(eggProfileForPid(0x1970, "Endgame Gear XM2w 4K v2").name, "Endgame Gear XM2w 4K v2");
+  assert.equal(eggProfileForPid(0x1984, "Endgame Gear XM2w 4K v2").name, "Endgame Gear XM2w 4K v2");
+  // A wired-model PID is never reinterpreted, even if a name happened to mention "xm2".
+  assert.equal(eggProfileForPid(0x1978, "xm2").name, "Endgame Gear OP1 8K v2");
 });
 
 test("CPI ranges and quantization follow each sensor generation", () => {
