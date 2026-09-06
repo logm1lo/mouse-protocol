@@ -253,8 +253,12 @@ export interface MouseStatus {
   /** How many Nape onboard layers VIA reported. Undefined when unread. */
   napeLayerCount?: number;
   performanceMode?: boolean | null;
-  hyperMode?: boolean | null;
+  /**
+   * Long-range / far-distance radio mode: trades battery for link range on
+   * receivers that offer it (ATK calls it Ultra Long Range).
+   */
   longRangeMode?: boolean | null;
+  hyperMode?: boolean | null;
   /** Sensor pinned to its highest frame rate (WLmouse "Turbo Mode"). */
   turboMode?: boolean | null;
   /** Whether button chords can change mouse settings without the driver. */
@@ -272,6 +276,22 @@ export interface MouseStatus {
   dpiLedBrightness?: number | null;
   dpiLedSpeed?: number | null;
   liftOffDistance: "Low" | "Medium" | "High" | null;
+  /**
+   * A single lift-off height the device tunes continuously, for mice whose
+   * firmware exposes a range rather than the three Low/Medium/High stops. The
+   * value and bounds are raw device codes; the millimetre figures are what the
+   * control labels. Drivers that only offer the stops leave this undefined, and
+   * a driver that sets it should still fill `liftOffDistance` with the nearest
+   * stop so anything reading the coarse field keeps working.
+   */
+  liftOffScale?: {
+    value: number;
+    min: number;
+    max: number;
+    millimetres: number;
+    minMillimetres: number;
+    maxMillimetres: number;
+  } | null;
   /** Explicit LOD choices when a mouse does not support all three common levels. */
   supportedLiftOffDistances?: Array<NonNullable<MouseStatus["liftOffDistance"]>>;
   /**

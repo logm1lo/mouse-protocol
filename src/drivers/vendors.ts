@@ -15,6 +15,11 @@ import {
 import { RAZER_PRODUCTS, RAZER_PRODUCT_IDS } from "@openmouse/protocol/razer-devices";
 import { PULSAR_XS1_PRODUCT_IDS } from "@openmouse/protocol/pulsar";
 import {
+  BITMOUSE_PRODUCT_IDS,
+  BITMOUSE_USAGE,
+  BITMOUSE_USAGE_PAGE,
+} from "@openmouse/protocol/bitmouse";
+import {
   NINJUTSO_LEGACY_MOUSE_PRODUCT_IDS,
   NINJUTSO_LEGACY_RECEIVER_PRODUCT_IDS,
   NINJUTSO_LEGACY_VENDOR_ID,
@@ -428,6 +433,8 @@ export const SUPPORTED_HID_FILTERS: HIDDeviceFilter[] = [
   { vendorId: VENDOR_ID.vgn, productId: 0xfb56 },
   { vendorId: VENDOR_ID.vgn, productId: 0xfb57 },
   { vendorId: VENDOR_ID.atk, usagePage: 0xff02, usage: 2 },
+  ...BITMOUSE_PRODUCT_IDS.map((productId) => (
+    { vendorId: VENDOR_ID.atk, productId, usagePage: BITMOUSE_USAGE_PAGE, usage: BITMOUSE_USAGE })),
   ...ATK_COMPX_PRODUCT_IDS.map((productId) => (
     { vendorId: VENDOR_ID.vgn, productId, usagePage: 0xff02, usage: 2 }
   )),
