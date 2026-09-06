@@ -17,6 +17,10 @@
       "types": "./dist/atk/index.d.ts",
       "import": "./dist/atk/index.js"
     },
+    "./bitmouse": {
+      "types": "./dist/bitmouse/index.d.ts",
+      "import": "./dist/bitmouse/index.js"
+    },
     "./endgame-gear-we": {
       "types": "./dist/endgame-gear/wireless.d.ts",
       "import": "./dist/endgame-gear/wireless.js"
@@ -40,6 +44,10 @@
     "./lamzu": {
       "types": "./dist/lamzu/index.d.ts",
       "import": "./dist/lamzu/index.js"
+    },
+    "./mchose": {
+      "types": "./dist/mchose/index.d.ts",
+      "import": "./dist/mchose/index.js"
     },
     "./logitech": {
       "types": "./dist/logitech/index.d.ts",
@@ -120,6 +128,10 @@
     "./glorious-classic": {
       "types": "./dist/glorious-classic/index.d.ts",
       "import": "./dist/glorious-classic/index.js"
+    },
+    "./ksnake": {
+      "types": "./dist/ksnake/index.d.ts",
+      "import": "./dist/ksnake/index.js"
     }
   },
   "scripts": {

@@ -1,12 +1,26 @@
+import { ATK_COMPX_PRODUCT_IDS } from "./atk/products.ts";
 import { EGG_WE_HID_FILTERS } from "./endgame/egg-we-control.ts";
+import { LINGBAO_PRODUCTS, LINGBAO_VENDOR_ID } from "./lingbao/hid.ts";
 import { GWOLVES_PRODUCTS } from "./gwolves/products.ts";
 import { LAMZU_INCA_PRODUCTS, LAMZU_INCA_VENDOR_ID } from "@openmouse/protocol/lamzu";
+import {
+  MCHOSE_CONFIG_USAGE,
+  MCHOSE_CONFIG_USAGE_PAGE,
+  MCHOSE_DOCK_PRODUCT_ID,
+  MCHOSE_DOCK_USAGE,
+  MCHOSE_DOCK_USAGE_PAGE,
+} from "@openmouse/protocol/mchose";
 import {
   LOGITECH_BOLT_PRODUCT_IDS,
   LOGITECH_DIRECT_PRODUCT_IDS,
 } from "@openmouse/protocol/logitech";
 import { RAZER_PRODUCTS, RAZER_PRODUCT_IDS } from "@openmouse/protocol/razer-devices";
 import { PULSAR_XS1_PRODUCT_IDS } from "@openmouse/protocol/pulsar";
+import {
+  BITMOUSE_PRODUCT_IDS,
+  BITMOUSE_USAGE,
+  BITMOUSE_USAGE_PAGE,
+} from "@openmouse/protocol/bitmouse";
 import {
   NINJUTSO_LEGACY_MOUSE_PRODUCT_IDS,
   NINJUTSO_LEGACY_RECEIVER_PRODUCT_IDS,
@@ -79,6 +93,9 @@ export const VENDOR_ID = {
   gloriousClassicI: 0x22d4, // original Model I
   gloriousClassicIWired: 0x320f, // Model O V2 / Model I 2 wired
   gloriousO3: 0x3794, // Model O3 Wireless / receiver (newer CORE-v2 generation)
+  mchose: 0x3837,
+  ksnakeUsb: 0xa8a4, // K-snake X11 wired
+  ksnakeDongle: 0xa8a5, // K-snake X11 2.4 GHz dongle
 } as const;
 
 /**
@@ -400,6 +417,15 @@ export const LAMZU_INCA_HID_FILTERS: HIDDeviceFilter[] = [...LAMZU_INCA_PRODUCTS
   (productId) => ({ vendorId: VENDOR_ID.lamzuInca, productId, usagePage: 0xffff }),
 );
 
+/**
+ * The Lingbao M5 Pro's 2.4G receiver and its wired product id. 0x3151 is the
+ * MicLink/mlzn ODM vendor id, shared with unrelated keyboards and mice, so
+ * these are requested per product id rather than vendor-wide.
+ */
+export const LINGBAO_HID_FILTERS: HIDDeviceFilter[] = [...LINGBAO_PRODUCTS.keys()].map(
+  (productId) => ({ vendorId: LINGBAO_VENDOR_ID, productId, usagePage: 0xffff, usage: 0x02 }),
+);
+
 export const SUPPORTED_HID_FILTERS: HIDDeviceFilter[] = [
   ...ZAUNKOENIG_PRODUCT_IDS.map((productId) => ({
     vendorId: ZAUNKOENIG_VENDOR_ID,
@@ -421,6 +447,11 @@ export const SUPPORTED_HID_FILTERS: HIDDeviceFilter[] = [
   { vendorId: VENDOR_ID.lamzu },
   ...LAMZU_INCA_HID_FILTERS,
   { vendorId: VENDOR_ID.orbital, usagePage: 0xff0a, usage: 1 },
+  // MCHOSE ships keyboards and audio devices under 0x3837 too, so this stays
+  // narrowed to the mouse configuration collection rather than the whole VID.
+  { vendorId: VENDOR_ID.mchose, usagePage: MCHOSE_CONFIG_USAGE_PAGE, usage: MCHOSE_CONFIG_USAGE },
+  // The MagDock is a separate device on its own usage page; it carries the RGB.
+  { vendorId: VENDOR_ID.mchose, productId: MCHOSE_DOCK_PRODUCT_ID, usagePage: MCHOSE_DOCK_USAGE_PAGE, usage: MCHOSE_DOCK_USAGE },
   ...TEEVOLUTION_PRODUCT_IDS.map((productId) => ({ vendorId: VENDOR_ID.teevolution, productId })),
   ...TEEVOLUTION_PRODUCT_IDS.map((productId) => ({
     vendorId: VENDOR_ID.teevolution,
@@ -436,6 +467,11 @@ export const SUPPORTED_HID_FILTERS: HIDDeviceFilter[] = [
   { vendorId: VENDOR_ID.vgn, productId: 0xfb56 },
   { vendorId: VENDOR_ID.vgn, productId: 0xfb57 },
   { vendorId: VENDOR_ID.atk, usagePage: 0xff02, usage: 2 },
+  ...BITMOUSE_PRODUCT_IDS.map((productId) => (
+    { vendorId: VENDOR_ID.atk, productId, usagePage: BITMOUSE_USAGE_PAGE, usage: BITMOUSE_USAGE })),
+  ...ATK_COMPX_PRODUCT_IDS.map((productId) => (
+    { vendorId: VENDOR_ID.vgn, productId, usagePage: 0xff02, usage: 2 }
+  )),
   { vendorId: VENDOR_ID.attackShark },
   { vendorId: VENDOR_ID.attackSharkX },
   ...RAZER_VIPER_V4_CONTROL_FILTERS,
@@ -452,6 +488,7 @@ export const SUPPORTED_HID_FILTERS: HIDDeviceFilter[] = [
   ...[...NINJUTSO_MOUSE_PRODUCT_IDS, ...NINJUTSO_RECEIVER_PRODUCT_IDS]
     .map((productId) => ({ vendorId: NINJUTSO_VENDOR_ID, productId })),
   ...LOGITECH_RECEIVER_FILTERS,
+  ...LINGBAO_HID_FILTERS,
   // Fantech mice use vendor usage page 0xFFFF, usage 0x02 for configuration.
   { vendorId: VENDOR_ID.fantech, usagePage: 0xffff, usage: 0x02 },
   ...WALLHACK_HID_FILTERS,
@@ -459,4 +496,8 @@ export const SUPPORTED_HID_FILTERS: HIDDeviceFilter[] = [
   ...STEELSERIES_RIVAL3_FILTERS,
   { vendorId: VENDOR_ID.glorious },
   ...GLORIOUS_CLASSIC_HID_FILTERS,
+  // K-snake X11 exposes its 0x55-framed control channel on 0xFF01:0x10 for
+  // both the wired USB VID and the 2.4 GHz dongle VID.
+  { vendorId: VENDOR_ID.ksnakeUsb, productId: 0x2255, usagePage: 0xff01, usage: 0x10 },
+  { vendorId: VENDOR_ID.ksnakeDongle, productId: 0x2255, usagePage: 0xff01, usage: 0x10 },
 ];
