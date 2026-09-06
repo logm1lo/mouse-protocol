@@ -45,6 +45,10 @@
       "types": "./dist/lamzu/index.d.ts",
       "import": "./dist/lamzu/index.js"
     },
+    "./mchose": {
+      "types": "./dist/mchose/index.d.ts",
+      "import": "./dist/mchose/index.js"
+    },
     "./logitech": {
       "types": "./dist/logitech/index.d.ts",
       "import": "./dist/logitech/index.js"
@@ -124,6 +128,10 @@
     "./glorious-classic": {
       "types": "./dist/glorious-classic/index.d.ts",
       "import": "./dist/glorious-classic/index.js"
+    },
+    "./ksnake": {
+      "types": "./dist/ksnake/index.d.ts",
+      "import": "./dist/ksnake/index.js"
     }
   },
   "scripts": {
