@@ -2,6 +2,7 @@ import { ATK_COMPX_PRODUCT_IDS } from "./atk/products.ts";
 import { EGG_WE_HID_FILTERS } from "./endgame/egg-we-control.ts";
 import { LINGBAO_PRODUCTS, LINGBAO_VENDOR_ID } from "./lingbao/hid.ts";
 import { GWOLVES_PRODUCTS } from "./gwolves/products.ts";
+import { LAMZU_INCA_PRODUCTS, LAMZU_INCA_VENDOR_ID } from "@openmouse/protocol/lamzu";
 import {
   MCHOSE_CONFIG_USAGE,
   MCHOSE_CONFIG_USAGE_PAGE,
@@ -63,6 +64,7 @@ export const VENDOR_ID = {
   endgameGear: 0x3367,
   wlmouse: 0x36a7,
   lamzu: 0x373e,
+  lamzuInca: LAMZU_INCA_VENDOR_ID,
   attackshark: 0x373e,
   logitech: 0x046d,
   orbital: 0x1915,
@@ -395,6 +397,27 @@ export const WALLHACK_HID_FILTERS: HIDDeviceFilter[] = [
 ];
 
 /**
+ * Lamzu's own vendor id carries the Inca 8K. Unlike the broad 0x373e filter
+ * this one is narrowed to usage page 0xffff, which keeps the mouse, consumer,
+ * system and keyboard collections on MI_00/MI_01 out of the picker on any
+ * platform that exposes a device's interfaces as separate HIDDevices. It
+ * cannot narrow further: the config channel is MI_02, whose usage is 0x0000,
+ * and a WebHID filter cannot pin a zero usage.
+ *
+ * That leaves MI_01's 0xffff/0x01 vendor collection as the only entry this
+ * filter still admits, and the driver's feature-report-0 check rejects it — a
+ * WebHID enumeration of both connections shows that collection declaring no
+ * feature reports at all, while only 0xffff/0x0000 declares report 0. See
+ * docs/lamzu-inca-testing.md.
+ *
+ * On Chrome/Windows the narrowing is moot: all seven collections arrive on a
+ * single HIDDevice, so the device is one picker entry whatever the filter says.
+ */
+export const LAMZU_INCA_HID_FILTERS: HIDDeviceFilter[] = [...LAMZU_INCA_PRODUCTS.keys()].map(
+  (productId) => ({ vendorId: VENDOR_ID.lamzuInca, productId, usagePage: 0xffff }),
+);
+
+/**
  * The Lingbao M5 Pro's 2.4G receiver and its wired product id. 0x3151 is the
  * MicLink/mlzn ODM vendor id, shared with unrelated keyboards and mice, so
  * these are requested per product id rather than vendor-wide.
@@ -422,6 +445,7 @@ export const SUPPORTED_HID_FILTERS: HIDDeviceFilter[] = [
   // Attack Shark. The broad filter surfaces all of them; each driver rejects
   // interfaces that lack the feature-report-0 control channel.
   { vendorId: VENDOR_ID.lamzu },
+  ...LAMZU_INCA_HID_FILTERS,
   { vendorId: VENDOR_ID.orbital, usagePage: 0xff0a, usage: 1 },
   // MCHOSE ships keyboards and audio devices under 0x3837 too, so this stays
   // narrowed to the mouse configuration collection rather than the whole VID.
