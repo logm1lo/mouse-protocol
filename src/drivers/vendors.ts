@@ -1,6 +1,13 @@
 import { EGG_WE_HID_FILTERS } from "./endgame/egg-we-control.ts";
 import { GWOLVES_PRODUCTS } from "./gwolves/products.ts";
 import {
+  MCHOSE_CONFIG_USAGE,
+  MCHOSE_CONFIG_USAGE_PAGE,
+  MCHOSE_DOCK_PRODUCT_ID,
+  MCHOSE_DOCK_USAGE,
+  MCHOSE_DOCK_USAGE_PAGE,
+} from "@openmouse/protocol/mchose";
+import {
   LOGITECH_BOLT_PRODUCT_IDS,
   LOGITECH_DIRECT_PRODUCT_IDS,
 } from "@openmouse/protocol/logitech";
@@ -77,6 +84,7 @@ export const VENDOR_ID = {
   gloriousClassicI: 0x22d4, // original Model I
   gloriousClassicIWired: 0x320f, // Model O V2 / Model I 2 wired
   gloriousO3: 0x3794, // Model O3 Wireless / receiver (newer CORE-v2 generation)
+  mchose: 0x3837,
 } as const;
 
 /**
@@ -397,6 +405,11 @@ export const SUPPORTED_HID_FILTERS: HIDDeviceFilter[] = [
   // interfaces that lack the feature-report-0 control channel.
   { vendorId: VENDOR_ID.lamzu },
   { vendorId: VENDOR_ID.orbital, usagePage: 0xff0a, usage: 1 },
+  // MCHOSE ships keyboards and audio devices under 0x3837 too, so this stays
+  // narrowed to the mouse configuration collection rather than the whole VID.
+  { vendorId: VENDOR_ID.mchose, usagePage: MCHOSE_CONFIG_USAGE_PAGE, usage: MCHOSE_CONFIG_USAGE },
+  // The MagDock is a separate device on its own usage page; it carries the RGB.
+  { vendorId: VENDOR_ID.mchose, productId: MCHOSE_DOCK_PRODUCT_ID, usagePage: MCHOSE_DOCK_USAGE_PAGE, usage: MCHOSE_DOCK_USAGE },
   ...TEEVOLUTION_PRODUCT_IDS.map((productId) => ({ vendorId: VENDOR_ID.teevolution, productId })),
   ...TEEVOLUTION_PRODUCT_IDS.map((productId) => ({
     vendorId: VENDOR_ID.teevolution,
