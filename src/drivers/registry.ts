@@ -40,9 +40,12 @@ import { SteelSeriesPrimeMiniWirelessHidClient } from "./steelseries/prime-mini-
 import { SteelSeriesSenseiTenHidClient } from "./steelseries/sensei-ten-hid.ts";
 import { GloriousHidClient } from "./glorious/hid.ts";
 import { GloriousClassicHidClient } from "./glorious/classic-hid.ts";
+import { MchoseHidClient } from "./mchose/hid.ts";
+import { MchoseDockHidClient } from "./mchose/dock-hid.ts";
+import { KsnakeHidClient } from "./ksnake/hid.ts";
 
 export type PulsarClient = PulsarHidClient | PulsarProHidClient | PulsarXs1HidClient;
-export type SupportedClient = LogitechHidppClient | PulsarClient | EggOp1HidClient | EggWeHidClient | FinalmouseHidClient | WLMouseHidClient | LamzuHidClient | OrbitalHidClient | RazerHidClient | RazerViperHidClient | RazerViperMiniHidClient | RazerViperV4ProHidClient | RazerCobraHidClient | TeevolutionHidClient | AtkHidClient | VgnF2HidClient | KeychronM6HidClient | KeychronNapeHidClient | ModdoHidClient | NinjutsoHidClient | ZaunkoenigHidClient | AttackSharkHidClient | FantechHidClient | WootingHidClient | WallhackMouseHidClient | WallhackKeyboardHidClient | GWolvesHidClient | SteelSeriesRival3HidClient | SteelSeriesAerox3HidClient | SteelSeriesRival3WirelessHidClient | SteelSeriesAerox5HidClient | SteelSeriesAerox5WirelessHidClient | SteelSeriesRival650HidClient | SteelSeriesAerox9WirelessHidClient | SteelSeriesRival310HidClient | SteelSeriesPrimePlusHidClient | SteelSeriesPrimeMiniWirelessHidClient | SteelSeriesSenseiTenHidClient | GloriousHidClient | GloriousClassicHidClient;
+export type SupportedClient = LogitechHidppClient | PulsarClient | EggOp1HidClient | EggWeHidClient | FinalmouseHidClient | WLMouseHidClient | LamzuHidClient | OrbitalHidClient | RazerHidClient | RazerViperHidClient | RazerViperMiniHidClient | RazerViperV4ProHidClient | RazerCobraHidClient | TeevolutionHidClient | AtkHidClient | VgnF2HidClient | KeychronM6HidClient | KeychronNapeHidClient | ModdoHidClient | NinjutsoHidClient | ZaunkoenigHidClient | AttackSharkHidClient | FantechHidClient | WootingHidClient | WallhackMouseHidClient | WallhackKeyboardHidClient | GWolvesHidClient | SteelSeriesRival3HidClient | SteelSeriesAerox3HidClient | SteelSeriesRival3WirelessHidClient | SteelSeriesAerox5HidClient | SteelSeriesAerox5WirelessHidClient | SteelSeriesRival650HidClient | SteelSeriesAerox9WirelessHidClient | SteelSeriesRival310HidClient | SteelSeriesPrimePlusHidClient | SteelSeriesPrimeMiniWirelessHidClient | SteelSeriesSenseiTenHidClient | GloriousHidClient | GloriousClassicHidClient | MchoseHidClient | MchoseDockHidClient | KsnakeHidClient;
 
 export interface DeviceDriver {
   brand: string;
@@ -94,6 +97,9 @@ export const DEVICE_DRIVERS: readonly DeviceDriver[] = [
   { brand: "SteelSeries", supports: (device) => SteelSeriesSenseiTenHidClient.isSupported(device), create: (device) => new SteelSeriesSenseiTenHidClient(device), score: () => 6 },
   { brand: "Glorious", supports: (device) => GloriousHidClient.isSupported(device), create: (device) => new GloriousHidClient(device), score: () => 5 },
   { brand: "Glorious", supports: (device) => GloriousClassicHidClient.isSupported(device), create: (device) => new GloriousClassicHidClient(device), score: () => 5 },
+  { brand: "MCHOSE", supports: (device) => MchoseHidClient.isSupported(device), create: (device) => new MchoseHidClient(device), score: () => 7 },
+  { brand: "MCHOSE", supports: (device) => MchoseDockHidClient.isSupported(device), create: (device) => new MchoseDockHidClient(device), score: () => 7 },
+  { brand: "K-snake", supports: (device) => KsnakeHidClient.isSupported(device), create: (device) => new KsnakeHidClient(device), score: () => 5 },
 ];
 
 function driverFor(device: HIDDevice): DeviceDriver | undefined {
