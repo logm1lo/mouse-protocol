@@ -99,7 +99,7 @@ export class EggOp1HidClient {
 
   constructor(device: HIDDevice) {
     this.device = device;
-    this.profile = eggProfileForPid(device.productId);
+    this.profile = eggProfileForPid(device.productId, device.productName);
   }
 
   static isSupported(device: HIDDevice): boolean {
